@@ -14,3 +14,5 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::post('/', 'SearchController@search')->name('results');
+Route::get('{username}/followers', 'SearchController@listFollowers')->name('list.followers');
