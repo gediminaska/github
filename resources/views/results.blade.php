@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="{{ app()->getLocale() }}">
-    <head></head>
-    <body>
+<head></head>
+<body>
     <h1>Search results</h1>
     <table>
         <tr>
             <th>Display picture</th>
             <th>Username</th>
-            <th>Count of followers</th>
+            <th>Score</th>
         </tr>
         @foreach($results as $result)
             <tr>
@@ -27,6 +27,5 @@
             </tr>
         @endforeach
     </table>
-
-    </body>
+</body>
 </html>

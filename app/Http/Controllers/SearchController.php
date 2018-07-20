@@ -24,10 +24,15 @@ class SearchController extends Controller
     {
         $client = new GuzzleHttp\Client();
         $response = $client->request('GET', 'https://api.github.com/users/' . $login . '/followers');
-//        preg_match('<(.*?)>', $response->getHeader('Link')[0], $matches);
-//        dd($matches);
-//        $links = $matches[0];
         $followers = json_decode($response->getBody()->getContents());
-        return view('followers', compact('login', 'followers'));
+        $secondPageUrl = null;
+        if($response->hasHeader('Link')) {
+            $paginationLinks = $response->getHeaders()['Link'][0];
+            preg_match('/(?=https)[^<]+(?=>; rel="next")/m', $paginationLinks, $secondPageUrl);
+            $secondPageUrl = $secondPageUrl[0];
+        }
+        $response = $client->request('GET', 'https://api.github.com/users/' . $login);
+        $numberOfFollowers = json_decode($response->getBody()->getContents())->followers;
+        return view('followers', compact('login', 'followers', 'secondPageUrl', 'numberOfFollowers'));
     }
 }
