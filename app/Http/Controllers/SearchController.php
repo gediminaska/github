@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use GuzzleHttp;
+use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
@@ -15,8 +15,9 @@ class SearchController extends Controller
             'q' => $request->username,
             'followers' => 1,
         ]]);
-        $contents = json_decode($response->getBody()->getContents());
-        $results = $contents->items;
+
+        $results = json_decode($response->getBody()->getContents())->items;
+
         return view('results', compact('results'));
     }
 
@@ -26,9 +27,8 @@ class SearchController extends Controller
         $response = $client->request('GET', 'https://api.github.com/users/' . $login . '/followers');
         $followers = json_decode($response->getBody()->getContents());
         $secondPageUrl = null;
-        if($response->hasHeader('Link')) {
-            $paginationLinks = $response->getHeaders()['Link'][0];
-            preg_match('/(?=https)[^<]+(?=>; rel="next")/m', $paginationLinks, $secondPageUrl);
+        if ($response->hasHeader('Link')) {
+            preg_match('/(?=https)[^<]+(?=>; rel="next")/m', $response->getHeaders()['Link'][0], $secondPageUrl);
             $secondPageUrl = $secondPageUrl[0];
         }
         $response = $client->request('GET', 'https://api.github.com/users/' . $login);
